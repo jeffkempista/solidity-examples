@@ -58,4 +58,33 @@ contract('Ballot', function(accounts) {
     })
   })
 
+  it('should count votes for proposals', () => {
+    return ballot.vote(0, {from: accounts[0]})
+    .then(() => {
+      return ballot.voters.call(accounts[0])
+    }).then((voter) => {
+      assert.equal(voter[1], true, 'Expect voted to be `true`')
+      return ballot.proposals.call(0)
+    }).then((proposal) => {
+      assert.equal(proposal[1], 1, 'Expect proposal to have `1` vote')
+      return ballot.giveRightToVote(accounts[2])
+    }).then(() => {
+      return ballot.vote(0, {from: accounts[2]})
+    }).then(() => {
+      return ballot.proposals.call(0)
+    }).then((proposal) => {
+      assert.equal(proposal[1], 2, 'Expect proposal to have `2` votes')
+      return ballot.giveRightToVote(accounts[3])
+    }).then(() => {
+      return ballot.vote(1, {from: accounts[3]})
+    }).then(() => {
+      return ballot.proposals.call(1)
+    }).then((proposal) => {
+      assert.equal(proposal[1], 1, 'Expect proposal to have `1` votes')
+      return ballot.winnerName()
+    }).then((winnerName) => {
+      assert.equal(web3.toUtf8(winnerName), 'Meyer')
+    })
+  })
+
 })
