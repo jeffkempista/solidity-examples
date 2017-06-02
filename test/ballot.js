@@ -29,7 +29,7 @@ contract('Ballot', function(accounts) {
   it('should set proposals', () => {
     return ballot.setProposals([
       "Meyer", 
-      "OBrian"
+      "O'Brian"
     ])
     .then(() => {
       return ballot.getProposalsCount.call()
@@ -43,8 +43,18 @@ contract('Ballot', function(accounts) {
     }).then(() => {
       return ballot.proposals.call(1)
     }).then((proposal) => {
-      assert.equal(web3.toUtf8(proposal[0]), 'OBrian')
+      assert.equal(web3.toUtf8(proposal[0]), "O'Brian")
       assert.equal(proposal[1], 0)
+    })
+  })
+
+  it('should allow chairperson to give right to voter', () => {
+    return ballot.giveRightToVote(accounts[1])
+    .then(() => {
+      return ballot.voters.call(accounts[1])
+    }).then((voter) => {
+      assert.equal(voter[0], 1, 'Expect weight of `1`')
+      assert.equal(voter[1], false, 'Expect voted to be `false`')
     })
   })
 
