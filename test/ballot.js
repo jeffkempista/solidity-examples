@@ -31,7 +31,6 @@ contract('Ballot', function(accounts) {
     .then(() => {
       return ballot.getProposalsCount.call()
     }).then((count) => {
-      console.log('Count: ' + count)
       assert.equal(count, 2, "Expect 2 proposals to exist")
     }).then(() => {
       return ballot.proposals.call(0)
