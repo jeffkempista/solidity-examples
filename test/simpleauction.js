@@ -60,4 +60,25 @@ contract('SimpleAuction', (accounts) => {
         })
     })
 
+    it("should send the highest bid to the beneficiary", () => {
+        const startTime = Date.now()
+        const beginningBeneficiaryBalance = web3.eth.getBalance(accounts[0]).toNumber()
+        const bidAmount = web3.toWei(4, 'ether')
+
+        return auction.bid({from: accounts[2], value: bidAmount})
+        .then(() => {
+            while(Date.now() <= startTime + (60 * 1000)) { 
+                // not ideal, but the auction time has to expire before the auction can end
+            }
+            return auction.auctionEnd({from: accounts[2]})
+        }).then(() => {
+            const endingBeneficiaryBalance = web3.eth.getBalance(accounts[0]).toNumber()
+            assert(endingBeneficiaryBalance > beginningBeneficiaryBalance, 'Expect beneficiary to receive funds from the auction')
+
+            const beginningBalanceEther = web3.fromWei(beginningBeneficiaryBalance, 'ether')
+            const endingBalanceEther = web3.fromWei(endingBeneficiaryBalance, 'ether')
+            assert.equal(endingBalanceEther - beginningBalanceEther, 4, 'Expect beneficiary to receive the highest bid amount')
+        })
+    })
+
 })
