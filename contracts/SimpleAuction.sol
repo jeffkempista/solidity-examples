@@ -13,7 +13,7 @@ contract SimpleAuction {
   uint public highestBid;
 
   // Allowed withdrawals of previous bids
-  mapping (address => uint) public pendingReturns;
+  mapping (address => uint) pendingReturns;
 
   // Set to true at the end, disallows any change
   bool ended;
