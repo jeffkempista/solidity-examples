@@ -21,8 +21,7 @@ contract('SimpleAuction', (accounts) => {
         return auction.biddingTime.call()
         .then((time) => {
             const biddingTime = time.toNumber()
-            assert.isNotNull(biddingTime, 'Expect a bidding time')
-            assert.isTrue(biddingTime > Date.now(), 'Expect a bidding time in the future')
+            assert.equal(biddingTime, 60, 'Expect a bidding time of `60` seconds')
         })
     })
 
