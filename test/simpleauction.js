@@ -27,30 +27,32 @@ contract('SimpleAuction', (accounts) => {
     })
 
     it("should record the highest bidder and their bid", () => {
-        return auction.bid({from: accounts[1], value: 10})
+        const bidAmount = web3.toWei(1, 'ether')
+        return auction.bid({from: accounts[1], value: bidAmount})
         .then(() => {
             return auction.highestBidder.call()
         }).then((highestBidder) => {
             assert.equal(highestBidder, accounts[1], 'Expect highest bidder to be the second account')
             return auction.highestBid.call()
         }).then((highestBid) => {
-            assert.equal(highestBid.toNumber(), 10, 'Expect highest bid to be `10`')
+            assert.equal(highestBid.toNumber(), bidAmount, 'Expect highest bid to be `1`')
         })
     })
 
     it("should record a new highest bidder and refund previous highest bid", () => {
+        const bidAmount = web3.toWei(2, 'ether')
         let balanceBeforeWithdraw
 
-        return auction.bid({from: accounts[2], value: web3.toWei(20, 'ether')})
+        return auction.bid({from: accounts[2], value: bidAmount})
         .then(() => {
-            return auction.bid({from: accounts[3], value: web3.toWei(30, 'ether')})
+            return auction.bid({from: accounts[3], value: web3.toWei(3, 'ether')})
         }).then(() => {
             return auction.highestBidder.call()
         }).then((highestBidder) => {
             assert.equal(highestBidder, accounts[3], 'Expect highest bidder to be the fourth account')
             return auction.highestBid.call()
         }).then((highestBid) => {
-            assert.equal(highestBid.toNumber(), web3.toWei(30, 'ether'), 'Expect highest bid to be `30`')
+            assert.equal(highestBid.toNumber(), web3.toWei(3, 'ether'), 'Expect highest bid to be `3`')
             balanceBeforeWithdraw = web3.eth.getBalance(accounts[2]).toNumber()
             return auction.withdraw({from:accounts[2]})
         }).then(() => {
